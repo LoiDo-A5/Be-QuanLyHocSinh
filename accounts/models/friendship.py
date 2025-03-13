@@ -16,5 +16,3 @@ class Friendship(models.Model):
 
     def __str__(self):
         return f"{self.from_user.username} -> {self.to_user.username} ({self.status})"
-
-
