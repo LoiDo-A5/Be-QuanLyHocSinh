@@ -8,11 +8,15 @@ from accounts.models import User
 
 class MeSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
-    name = serializers.CharField()
+    full_name = serializers.CharField(source='get_full_name')
 
     def update(self, instance, validated_data):
         user = instance
-        user.name = validated_data['name']
+        # Handle update based on first_name and last_name
+        name_parts = validated_data['full_name'].split(' ', 1)
+        user.first_name = name_parts[0]
+        if len(name_parts) > 1:
+            user.last_name = name_parts[1]
         user.save()
         return user
 
@@ -21,8 +25,8 @@ class MePatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
-            'id', 'name', 'email', 'avatar', 'phone_number',
-            'birthday',
+            'id', 'email', 'avatar', 'phone_number',
+            'birthday', 'first_name', 'last_name',  # Add these fields for partial update
         )
 
 
