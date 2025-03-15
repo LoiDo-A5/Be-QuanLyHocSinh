@@ -8,11 +8,12 @@ from accounts.api.login_api import LoginApi
 from accounts.api.me import MeApi
 from accounts.api.message_list import ListMessage
 from accounts.api.register_phone import RegisterPhoneApi
-from accounts.api.users import UserListApi
 from accounts.api.direct_messages import DirectMessages
+from accounts.api.users import UserViewSet
 
 router = SimpleRouter()
 router.register(r'friendship', FriendshipViewSet, basename='friendship')
+router.register(r'user', UserViewSet, basename='user')
 
 urlpatterns = [
     path('login/', LoginApi.as_view()),
@@ -21,7 +22,6 @@ urlpatterns = [
     path('rooms/', ChatRoomList.as_view(), name='rooms'),
     path('messages/', ListMessage.as_view(), name='messages'),
     path('token/refresh/', TokenRefreshView.as_view()),
-    path('list_user/', UserListApi.as_view(), name='list_user'),
     path('direct_messages/', DirectMessages.as_view(), name='direct_messages'),
 
 ]
