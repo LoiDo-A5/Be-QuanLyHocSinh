@@ -49,3 +49,6 @@ class User(AbstractUser):
         if self.role == USER_ROLE.STUDENT:
             if self.age < 15 or self.age > 20:
                 raise ValidationError("Học sinh phải có độ tuổi từ 15 đến 20.")
+
+    def __str__(self):
+        return self.full_name if self.full_name else super().__str__()
