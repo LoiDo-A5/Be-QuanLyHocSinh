@@ -2,6 +2,7 @@ from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework.routers import SimpleRouter
 
+from accounts.api.add_student_to_class import AddStudentToClass
 from accounts.api.chatroom_list import ChatRoomList
 from accounts.api.class_level import ClassLevelViewSet
 from accounts.api.class_name import ClassNameViewSet
@@ -16,7 +17,7 @@ from accounts.api.users import UserViewSet
 router = SimpleRouter()
 router.register(r'friendship', FriendshipViewSet, basename='friendship')
 router.register(r'user', UserViewSet, basename='user')
-router.register(r'class_level', ClassLevelViewSet, basename='class_level')  # Register ClassLevelViewSet
+router.register(r'class_level', ClassLevelViewSet, basename='class_level')
 router.register(r'class_name', ClassNameViewSet, basename='class_name')
 
 urlpatterns = [
@@ -27,7 +28,7 @@ urlpatterns = [
     path('messages/', ListMessage.as_view(), name='messages'),
     path('token/refresh/', TokenRefreshView.as_view()),
     path('direct_messages/', DirectMessages.as_view(), name='direct_messages'),
-
+    path('add_student_to_class/', AddStudentToClass.as_view(), name='add_student_to_class'),
 ]
 
 urlpatterns += router.urls
