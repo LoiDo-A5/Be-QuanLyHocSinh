@@ -42,6 +42,8 @@ class User(AbstractUser):
 
     @property
     def age(self):
+        if self.birthday is None:
+            return None
         today = date.today()
         return today.year - self.birthday.year - ((today.month, today.day) < (self.birthday.month, self.birthday.day))
 
