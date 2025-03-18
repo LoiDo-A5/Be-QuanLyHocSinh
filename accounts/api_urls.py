@@ -5,6 +5,7 @@ from rest_framework.routers import SimpleRouter
 from accounts.api.add_student_to_class import AddStudentToClass
 from accounts.api.chatroom_list import ChatRoomList
 from accounts.api.class_level import ClassLevelViewSet
+from accounts.api.class_list import ClassListAPIView
 from accounts.api.class_name import ClassNameViewSet
 from accounts.api.friendship_api import FriendshipViewSet
 from accounts.api.login_api import LoginApi
@@ -29,6 +30,7 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view()),
     path('direct_messages/', DirectMessages.as_view(), name='direct_messages'),
     path('add_student_to_class/', AddStudentToClass.as_view(), name='add_student_to_class'),
+    path('class_list/', ClassListAPIView.as_view(), name='class_list'),
 ]
 
 urlpatterns += router.urls

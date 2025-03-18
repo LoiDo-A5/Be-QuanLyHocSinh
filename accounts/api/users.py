@@ -5,7 +5,7 @@ from rest_framework import serializers
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
-class ArtworkPagination(PageNumberPagination):
+class UserPagination(PageNumberPagination):
     page_size = 10
 
     def get_paginated_response(self, data):
@@ -29,4 +29,4 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('id')
     serializer_class = UserListSerializer
     permission_classes = (IsAuthenticated,)
-    pagination_class = ArtworkPagination
+    pagination_class = UserPagination
