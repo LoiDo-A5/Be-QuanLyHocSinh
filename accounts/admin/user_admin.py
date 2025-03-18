@@ -2,10 +2,10 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 
 class UserAdmin(BaseUserAdmin):
-    list_display = ('id', 'username', 'email', 'phone_number', 'first_name', 'last_name', 'avatar',
+    list_display = ('id', 'full_name', 'email', 'phone_number', 'first_name', 'last_name', 'avatar',
                     'birthday', 'is_phone_verified')
-    list_filter = ('username', 'email')
-    search_fields = ('username', 'email', 'phone_number', 'birthday')
+    list_filter = ('full_name', 'email')
+    search_fields = ('full_name', 'email', 'phone_number', 'birthday')
 
     fieldsets = (
         (None, {'fields': ('username', 'email', 'password')}),
