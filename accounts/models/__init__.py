@@ -6,3 +6,7 @@ from .friendship import Friendship
 from .class_level import ClassLevel
 from .class_student import ClassStudent
 from .class_name import ClassName
+from .semester import Semester
+from .student_score import StudentScore
+from .subject import Subject
+from .subject_score import SubjectScore
