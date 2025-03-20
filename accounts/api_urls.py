@@ -13,6 +13,7 @@ from accounts.api.me import MeApi
 from accounts.api.message_list import ListMessage
 from accounts.api.register_phone import RegisterPhoneApi
 from accounts.api.direct_messages import DirectMessages
+from accounts.api.subject import SubjectListAPIView, SubjectCreateAPIView
 from accounts.api.users import UserViewSet
 
 router = SimpleRouter()
@@ -31,6 +32,8 @@ urlpatterns = [
     path('direct_messages/', DirectMessages.as_view(), name='direct_messages'),
     path('add_student_to_class/', AddStudentToClass.as_view(), name='add_student_to_class'),
     path('class_list/', ClassListAPIView.as_view(), name='class_list'),
+    path('subjects/', SubjectListAPIView.as_view(), name='subject-list'),
+    path('subjects/create/', SubjectCreateAPIView.as_view(), name='subject-create')
 ]
 
 urlpatterns += router.urls
