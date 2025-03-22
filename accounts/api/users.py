@@ -29,11 +29,12 @@ class StudentScoreSerializer(serializers.ModelSerializer):
 
 class UserListSerializer(serializers.ModelSerializer):
     student_score = serializers.SerializerMethodField()
+    class_name = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = ('id', 'full_name', 'gender', 'birthday', 'address', 'email', 'phone_number',
-                  'is_phone_verified', 'avatar', 'time_zone', 'role', 'student_score')
+                  'is_phone_verified', 'avatar', 'time_zone', 'role', 'student_score', 'class_name')
 
     def get_student_score(self, obj):
         student_score = StudentScore.objects.filter(student=obj).first()
@@ -43,6 +44,13 @@ class UserListSerializer(serializers.ModelSerializer):
                 "semester_2_avg": student_score.semester_2_avg,
             }
         return None
+
+    def get_class_name(self, obj):
+        student_score = StudentScore.objects.filter(student=obj).first()
+        if student_score and student_score.class_name:
+            class_name = f"{student_score.class_name.level.level_name}{student_score.class_name.class_name}"
+            return class_name
+        return 'Không có lớp'
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('id')
