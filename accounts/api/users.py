@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
-from accounts.models import User, StudentScore
+from accounts.models import User, StudentScore, ClassStudent
 from rest_framework import serializers
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
@@ -46,9 +46,9 @@ class UserListSerializer(serializers.ModelSerializer):
         return None
 
     def get_class_name(self, obj):
-        student_score = StudentScore.objects.filter(student=obj).first()
-        if student_score and student_score.class_name:
-            class_name = f"{student_score.class_name.level.level_name}{student_score.class_name.class_name}"
+        class_student = ClassStudent.objects.filter(student=obj).first()
+        if class_student and class_student.class_name:
+            class_name = f"{class_student.class_name.level.level_name}{class_student.class_name.class_name}"
             return class_name
         return 'Không có lớp'
 
