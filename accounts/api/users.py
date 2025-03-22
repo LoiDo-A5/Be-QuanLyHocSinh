@@ -1,10 +1,11 @@
-from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated
-from accounts.models import User, StudentScore, ClassStudent
 from rest_framework import serializers
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import viewsets
+from accounts.models import User, StudentScore, ClassStudent
+
 
 class UserPagination(PageNumberPagination):
     page_size = 10
@@ -19,6 +20,7 @@ class UserPagination(PageNumberPagination):
         }
         return Response(data_response)
 
+
 class StudentScoreSerializer(serializers.ModelSerializer):
     semester_1_avg = serializers.FloatField()
     semester_2_avg = serializers.FloatField()
@@ -26,6 +28,7 @@ class StudentScoreSerializer(serializers.ModelSerializer):
     class Meta:
         model = StudentScore
         fields = ['semester_1_avg', 'semester_2_avg']
+
 
 class UserListSerializer(serializers.ModelSerializer):
     student_score = serializers.SerializerMethodField()
@@ -37,12 +40,15 @@ class UserListSerializer(serializers.ModelSerializer):
                   'is_phone_verified', 'avatar', 'time_zone', 'role', 'student_score', 'class_name')
 
     def get_student_score(self, obj):
-        student_score = StudentScore.objects.filter(student=obj).first()
-        if student_score:
-            return {
-                "semester_1_avg": student_score.semester_1_avg,
-                "semester_2_avg": student_score.semester_2_avg,
-            }
+        class_student = ClassStudent.objects.filter(student=obj).first()
+
+        if class_student:
+            student_score = StudentScore.objects.filter(student=obj, class_name=class_student.class_name).first()
+            if student_score:
+                return {
+                    "semester_1_avg": student_score.semester_1_avg,
+                    "semester_2_avg": student_score.semester_2_avg,
+                }
         return None
 
     def get_class_name(self, obj):
@@ -51,6 +57,7 @@ class UserListSerializer(serializers.ModelSerializer):
             class_name = f"{class_student.class_name.level.level_name}{class_student.class_name.class_name}"
             return class_name
         return 'Không có lớp'
+
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('id')

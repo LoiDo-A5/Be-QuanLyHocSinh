@@ -12,9 +12,6 @@ class StudentScore(models.Model):
     def __str__(self):
         return f"{self.student.full_name} - {self.class_name}"
 
-    class Meta:
-        unique_together = ['student', 'class_name']
-
     def _calculate_avg(self, semester):
         subject_scores = SubjectScore.objects.filter(
             student=self.student,
