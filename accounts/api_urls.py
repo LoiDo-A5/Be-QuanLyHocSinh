@@ -8,12 +8,14 @@ from accounts.api.class_level import ClassLevelViewSet
 from accounts.api.class_list import ClassListAPIView
 from accounts.api.class_name import ClassNameViewSet
 from accounts.api.friendship_api import FriendshipViewSet
+from accounts.api.list_subject_score import SubjectScoreList
 from accounts.api.login_api import LoginApi
 from accounts.api.me import MeApi
 from accounts.api.message_list import ListMessage
 from accounts.api.register_phone import RegisterPhoneApi
 from accounts.api.direct_messages import DirectMessages
 from accounts.api.subject import SubjectListAPIView, SubjectCreateAPIView
+from accounts.api.subject_score import SubjectScoreCreateUpdateAPIView
 from accounts.api.users import UserViewSet
 
 router = SimpleRouter()
@@ -33,7 +35,9 @@ urlpatterns = [
     path('add_student_to_class/', AddStudentToClass.as_view(), name='add_student_to_class'),
     path('class_list/', ClassListAPIView.as_view(), name='class_list'),
     path('subjects/', SubjectListAPIView.as_view(), name='subject-list'),
-    path('subjects/create/', SubjectCreateAPIView.as_view(), name='subject-create')
+    path('subjects/create/', SubjectCreateAPIView.as_view(), name='subject-create'),
+    path('subject_score/create_update/', SubjectScoreCreateUpdateAPIView.as_view()),
+    path('subject_score/', SubjectScoreList.as_view(), name='subject_score'),
 ]
 
 urlpatterns += router.urls
