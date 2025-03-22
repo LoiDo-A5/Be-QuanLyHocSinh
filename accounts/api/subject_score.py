@@ -17,14 +17,12 @@ class SubjectScoreCreateUpdateAPIView(APIView):
         subject_id = request.data.get('subject')
         semester = request.data.get('semester')
 
-        # Validate required fields
         if not all([student_id, class_id, subject_id, semester]):
             return Response({
                 'message': 'Missing required fields: student, class_name, subject, or semester'
             }, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            # Update or create SubjectScore
             subject_score, created = SubjectScore.objects.update_or_create(
                 student_id=student_id,
                 class_name_id=class_id,
@@ -37,7 +35,6 @@ class SubjectScoreCreateUpdateAPIView(APIView):
                 }
             )
 
-            # Check if ClassStudent exists
             class_student = ClassStudent.objects.filter(
                 student_id=student_id,
                 class_name_id=class_id
@@ -48,18 +45,17 @@ class SubjectScoreCreateUpdateAPIView(APIView):
                     'message': 'Student is not enrolled in this class'
                 }, status=status.HTTP_400_BAD_REQUEST)
 
-            # Update or create StudentScore
             student_score_instance, created = StudentScore.objects.update_or_create(
                 student_id=student_id,
                 class_name_id=class_id,
                 defaults={
-                    'is_calculated': False,  # Reset flag to trigger recalculation
+                    'is_calculated': False,
                 }
             )
 
-            # Recalculate averages after updating SubjectScore
             student_score_instance.calculate_semester_1_avg()
             student_score_instance.calculate_semester_2_avg()
+            student_score_instance.save()
 
             return Response({
                 'message': 'Score created or updated successfully',

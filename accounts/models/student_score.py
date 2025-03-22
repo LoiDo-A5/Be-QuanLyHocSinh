@@ -18,7 +18,7 @@ class StudentScore(models.Model):
             class_name=self.class_name,
             semester=semester
         )
-
+        print('444444444444',subject_scores)
         if not subject_scores.exists():
             return None
 
@@ -42,17 +42,12 @@ class StudentScore(models.Model):
 
     def calculate_semester_1_avg(self):
         self.semester_1_avg = self._calculate_avg(semester=1)
-        self.is_calculated = True
 
     def calculate_semester_2_avg(self):
         self.semester_2_avg = self._calculate_avg(semester=2)
-        self.is_calculated = True
 
     def save(self, *args, **kwargs):
-        # Check and calculate only if needed
-        if not self.pk or not self.is_calculated:
-            self.calculate_semester_1_avg()
-            self.calculate_semester_2_avg()
+        self.calculate_semester_1_avg()
+        self.calculate_semester_2_avg()
+
         super().save(*args, **kwargs)
-
-
