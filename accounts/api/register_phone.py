@@ -4,29 +4,23 @@ from rest_framework import status
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from accounts.models import User
-from django.contrib.auth.hashers import make_password
-
 
 class RegisterPhoneSerializer(serializers.ModelSerializer):
-    phone = serializers.CharField(min_length=10, max_length=15, source='phone_number')
-    password1 = serializers.CharField(write_only=True)
-    password2 = serializers.CharField(write_only=True)
+    full_name = serializers.CharField(max_length=100, required=True)
+    gender = serializers.ChoiceField(choices=[(0, 'Male'), (1, 'Female')], required=True)
+    birthday = serializers.DateField(required=True)
+    address = serializers.CharField(max_length=255, required=True)
 
     class Meta:
         model = User
         fields = (
-            'name',
-            'phone',
+            'full_name',
             'email',
-            'password1',
-            'password2',
+            'gender',
+            'birthday',
+            'address',
             'time_zone',
         )
-
-    def validate_phone(self, phone):
-        if not phone.isdigit():
-            raise serializers.ValidationError(gettext('Phone number must only contain digits'))
-        return phone
 
     def validate_email(self, email):
         if User.objects.filter(email=email).exists():
@@ -35,12 +29,6 @@ class RegisterPhoneSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         attrs = super().validate(attrs)
-        if attrs['password1'] != attrs['password2']:
-            raise serializers.ValidationError(gettext("The two password fields didn't match."))
-
-        attrs['password'] = make_password(attrs['password1'])
-        attrs['username'] = attrs['phone_number']
-
         return attrs
 
     def validate_time_zone(self, time_zone):
@@ -49,7 +37,6 @@ class RegisterPhoneSerializer(serializers.ModelSerializer):
         return time_zone
 
     def create(self, validated_data):
-        validated_data['password'] = make_password(validated_data['password'])
         return super().create(validated_data)
 
 
@@ -60,17 +47,19 @@ class RegisterPhoneApi(GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        phone_exists = User.objects.filter(phone_number=serializer.validated_data['phone_number']).exists()
         email_exists = User.objects.filter(email=serializer.validated_data['email']).exists()
 
-        if phone_exists or email_exists:
-            error_message = gettext('Phone number or email already exists')
+        if email_exists:
+            error_message = gettext('Email already exists')
             return Response({'error': error_message}, status=status.HTTP_400_BAD_REQUEST)
 
         User.objects.create(
-            username=serializer.validated_data['phone_number'],
+            username=serializer.validated_data['email'],
             email=serializer.validated_data['email'],
-            password=serializer.validated_data['password'],
+            full_name=serializer.validated_data['full_name'],
+            gender=serializer.validated_data['gender'],
+            birthday=serializer.validated_data['birthday'],
+            address=serializer.validated_data['address'],
             time_zone=serializer.validated_data.get('time_zone', 'Asia/Ho_Chi_Minh'),
         )
 
