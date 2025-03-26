@@ -15,6 +15,7 @@ from accounts.api.message_list import ListMessage
 from accounts.api.register_phone import RegisterPhoneApi
 from accounts.api.direct_messages import DirectMessages
 from accounts.api.subject import SubjectListAPIView, SubjectCreateAPIView
+from accounts.api.subject_report import SubjectReportView
 from accounts.api.subject_score import SubjectScoreCreateUpdateAPIView
 from accounts.api.users import UserViewSet
 
@@ -38,6 +39,7 @@ urlpatterns = [
     path('subjects/create/', SubjectCreateAPIView.as_view(), name='subject-create'),
     path('subject_score/create_update/', SubjectScoreCreateUpdateAPIView.as_view()),
     path('subject_score/', SubjectScoreList.as_view(), name='subject_score'),
+    path('subject_report/', SubjectReportView.as_view(), name='subject_report'),
 ]
 
 urlpatterns += router.urls
