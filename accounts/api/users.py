@@ -5,6 +5,9 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
 from accounts.models import User, StudentScore, ClassStudent
+from rest_framework.filters import SearchFilter
+import django_filters
+from django_filters import rest_framework as filters
 
 
 class UserPagination(PageNumberPagination):
@@ -64,11 +67,13 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserListSerializer
     permission_classes = (IsAuthenticated,)
     pagination_class = UserPagination
+    filter_backends = (filters.DjangoFilterBackend, SearchFilter)
+    search_fields = ['full_name']
 
     @action(detail=False, methods=['get'])
     def list_student(self, request):
         students = User.objects.filter(role=1)
-
+        students = self.filter_queryset(students)
         page = self.paginate_queryset(students)
         if page is not None:
             serializer = UserListSerializer(page, many=True)

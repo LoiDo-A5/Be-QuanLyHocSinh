@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'accounts',
     'corsheaders',
     'storages',
+    'django_filters',
 ]
 
 AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
