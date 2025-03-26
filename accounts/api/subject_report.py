@@ -36,10 +36,10 @@ class SubjectReportView(APIView):
             )
         )
 
-        # Xử lý dữ liệu đầu ra
         report_data = []
         for index, class_data in enumerate(class_reports, start=1):
-            class_name = ClassName.objects.get(id=class_data['class_name']).class_name
+            class_obj = ClassName.objects.select_related('level').get(id=class_data['class_name'])
+            class_name = f"{class_obj.level.level_name}{class_obj.class_name}"
             total_students = class_data['total_students']
             passed_students = class_data['passed_students']
             pass_rate = round((passed_students / total_students) * 100, 2) if total_students > 0 else 0
