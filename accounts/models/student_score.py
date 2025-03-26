@@ -18,7 +18,6 @@ class StudentScore(models.Model):
             class_name=self.class_name,
             semester=semester
         )
-        print('444444444444',subject_scores)
         if not subject_scores.exists():
             return None
 
