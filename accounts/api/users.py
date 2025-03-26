@@ -73,7 +73,12 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'])
     def list_student(self, request):
         students = User.objects.filter(role=1)
+        class_name_id = request.query_params.get('class_name_id', None)
+        if class_name_id:
+            students = students.filter(classstudent__class_name__id=class_name_id)
+
         students = self.filter_queryset(students)
+
         page = self.paginate_queryset(students)
         if page is not None:
             serializer = UserListSerializer(page, many=True)
