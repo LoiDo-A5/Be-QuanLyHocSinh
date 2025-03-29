@@ -1,11 +1,9 @@
 from django.db.models import Count, Q, F, ExpressionWrapper, FloatField
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 from accounts.models import SubjectScore, ClassName, Subject
 
 class SubjectReportView(APIView):
-    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         subject_id = request.query_params.get("subject_id")
