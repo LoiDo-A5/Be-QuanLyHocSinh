@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from accounts.models import ClassName, StudentScore
+from accounts.models import ClassName, SubjectScore, ClassStudent
 from rest_framework import serializers
 
 class SemesterReportSerializer(serializers.Serializer):
@@ -22,16 +22,44 @@ class SemesterReportAPIView(APIView):
         classes = ClassName.objects.all()
 
         for class_obj in classes:
-            student_scores = StudentScore.objects.filter(class_name=class_obj)
-            total_students = student_scores.count()
+            # Lấy danh sách học sinh của lớp
+            student_ids = ClassStudent.objects.filter(class_name=class_obj).values_list('student_id', flat=True)
+            total_students = student_ids.count()
+            passed_students = 0
 
-            if total_students == 0:
-                passed_students = 0
-            else:
-                if semester == 1:
-                    passed_students = student_scores.filter(semester_1_avg__gte=5).count()
-                else:
-                    passed_students = student_scores.filter(semester_2_avg__gte=5).count()
+            for student_id in student_ids:
+                # Lấy điểm tất cả các môn của học sinh trong học kỳ
+                subject_scores = SubjectScore.objects.filter(
+                    student_id=student_id,
+                    class_name=class_obj,
+                    semester=semester
+                )
+
+                # Nếu thiếu điểm thì coi là chưa đủ điều kiện
+                if not subject_scores.exists():
+                    continue
+
+                is_passed = True
+                for score in subject_scores:
+                    total = 0
+                    weight = 0
+
+                    if score.midterm_score is not None:
+                        total += score.midterm_score * 1
+                        weight += 1
+                    if score.final_score is not None:
+                        total += score.final_score * 2
+                        weight += 2
+                    if score.final_exam_score is not None:
+                        total += score.final_exam_score * 3
+                        weight += 3
+
+                    if weight == 0 or (total / weight) < 5:
+                        is_passed = False
+                        break
+
+                if is_passed:
+                    passed_students += 1
 
             passed_ratio = round((passed_students / total_students) * 100, 2) if total_students > 0 else 0
 
