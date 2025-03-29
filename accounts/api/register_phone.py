@@ -4,8 +4,11 @@ from rest_framework import status
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from accounts.models import User
+from django.contrib.auth.hashers import make_password
 
 class RegisterPhoneSerializer(serializers.ModelSerializer):
+    password1 = serializers.CharField(write_only=True)
+    password2 = serializers.CharField(write_only=True)
     full_name = serializers.CharField(max_length=100, required=True)
     gender = serializers.ChoiceField(choices=[(0, 'Male'), (1, 'Female')], required=True)
     birthday = serializers.DateField(required=True)
@@ -16,6 +19,8 @@ class RegisterPhoneSerializer(serializers.ModelSerializer):
         fields = (
             'full_name',
             'email',
+            'password1',
+            'password2',
             'gender',
             'birthday',
             'address',
@@ -29,6 +34,10 @@ class RegisterPhoneSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         attrs = super().validate(attrs)
+        if attrs['password1'] != attrs['password2']:
+            raise serializers.ValidationError(gettext("The two password fields didn't match."))
+
+        attrs['password'] = make_password(attrs['password1'])
         return attrs
 
     def validate_time_zone(self, time_zone):
@@ -37,6 +46,7 @@ class RegisterPhoneSerializer(serializers.ModelSerializer):
         return time_zone
 
     def create(self, validated_data):
+        validated_data['password'] = make_password(validated_data['password'])
         return super().create(validated_data)
 
 
@@ -56,6 +66,7 @@ class RegisterPhoneApi(GenericAPIView):
         User.objects.create(
             username=serializer.validated_data['email'],
             email=serializer.validated_data['email'],
+            password=serializer.validated_data['password'],
             full_name=serializer.validated_data['full_name'],
             gender=serializer.validated_data['gender'],
             birthday=serializer.validated_data['birthday'],
