@@ -25,6 +25,7 @@ router.register(r'friendship', FriendshipViewSet, basename='friendship')
 router.register(r'user', UserViewSet, basename='user')
 router.register(r'class_level', ClassLevelViewSet, basename='class_level')
 router.register(r'class_name', ClassNameViewSet, basename='class_name')
+router.register(r'system_setting_age', ClassNameViewSet, basename='system_setting_age')
 
 urlpatterns = [
     path('login/', LoginApi.as_view()),

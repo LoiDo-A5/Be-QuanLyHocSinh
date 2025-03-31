@@ -9,3 +9,4 @@ from .class_name import ClassName
 from .student_score import StudentScore
 from .subject import Subject
 from .subject_score import SubjectScore
+from .system_setting_age import SystemSetting

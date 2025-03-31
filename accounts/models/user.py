@@ -4,6 +4,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 
+from accounts.models import SystemSetting
+
 
 class USER_ROLE:
     STUDENT = 1
@@ -49,8 +51,13 @@ class User(AbstractUser):
 
     def clean(self):
         if self.role == USER_ROLE.STUDENT:
-            if self.age < 15 or self.age > 20:
-                raise ValidationError("Học sinh phải có độ tuổi từ 15 đến 20.")
+            settings = SystemSetting.objects.first()
+            if settings:
+                if self.age is not None and (
+                        self.age < settings.min_student_age or self.age > settings.max_student_age):
+                    raise ValidationError(
+                        f"Học sinh phải có độ tuổi từ {settings.min_student_age} đến {settings.max_student_age}."
+                    )
 
     def __str__(self):
         return self.full_name if self.full_name else super().__str__()
