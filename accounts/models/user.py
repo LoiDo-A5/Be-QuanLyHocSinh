@@ -4,7 +4,6 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 
-from accounts.models import SystemSetting
 
 
 class USER_ROLE:
@@ -50,6 +49,7 @@ class User(AbstractUser):
         return today.year - self.birthday.year - ((today.month, today.day) < (self.birthday.month, self.birthday.day))
 
     def clean(self):
+        from accounts.models import SystemSetting
         if self.role == USER_ROLE.STUDENT:
             settings = SystemSetting.objects.first()
             if settings:
