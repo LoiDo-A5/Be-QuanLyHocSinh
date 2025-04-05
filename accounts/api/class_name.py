@@ -4,7 +4,6 @@ from accounts.models.class_name import ClassName
 from rest_framework.response import Response
 from rest_framework import status
 
-
 class ClassNameSerializer(serializers.ModelSerializer):
     level_name = serializers.CharField(source='level.level_name', read_only=True)
 
@@ -40,3 +39,8 @@ class ClassNameViewSet(viewsets.ModelViewSet):
         except PermissionError as e:
             return Response({'error': str(e)}, status=status.HTTP_403_FORBIDDEN)
 
+    def destroy(self, request, *args, **kwargs):
+        try:
+            return super().destroy(request, *args, **kwargs)
+        except PermissionError as e:
+            return Response({'error': str(e)}, status=status.HTTP_403_FORBIDDEN)
