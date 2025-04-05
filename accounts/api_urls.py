@@ -18,6 +18,7 @@ from accounts.api.semester_report import SemesterReportAPIView
 from accounts.api.subject import SubjectListAPIView, SubjectCreateAPIView
 from accounts.api.subject_report import SubjectReportView
 from accounts.api.subject_score import SubjectScoreCreateUpdateAPIView
+from accounts.api.system_setting_age import  SystemSettingView
 from accounts.api.users import UserViewSet
 
 router = SimpleRouter()
@@ -43,6 +44,7 @@ urlpatterns = [
     path('subject_score/', SubjectScoreList.as_view(), name='subject_score'),
     path('subject_report/', SubjectReportView.as_view(), name='subject_report'),
     path('semester_report/', SemesterReportAPIView.as_view(), name='semester_report'),
+    path('system_setting/', SystemSettingView.as_view(), name='system_setting'),
 ]
 
 urlpatterns += router.urls

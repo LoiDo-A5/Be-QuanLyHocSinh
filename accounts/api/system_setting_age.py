@@ -1,11 +1,9 @@
-from rest_framework import viewsets
-from rest_framework import serializers
-
-from accounts.models import SystemSetting
-from accounts.models.user import USER_ROLE
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework import serializers
+from accounts.models import SystemSetting
+
 
 class SystemSettingSerializer(serializers.ModelSerializer):
     class Meta:
@@ -13,13 +11,16 @@ class SystemSettingSerializer(serializers.ModelSerializer):
         fields = ['min_student_age', 'max_student_age']
 
 
-class SystemSettingViewSet(viewsets.ModelViewSet):
-    queryset = SystemSetting.objects.all()
-    serializer_class = SystemSettingSerializer
-    permission_classes = [IsAuthenticated]
+class SystemSettingView(APIView):
+    def get(self, request):
+        setting, _ = SystemSetting.objects.get_or_create()
+        serializer = SystemSettingSerializer(setting)
+        return Response(serializer.data)
 
-    def get_permissions(self):
-        if self.action in ['update', 'partial_update', 'create']:
-            if self.request.user.role == USER_ROLE.STUDENT:
-                self.permission_denied(self.request, message="Only admins can modify system settings.")
-        return super().get_permissions()
+    def put(self, request):
+        setting, _ = SystemSetting.objects.get_or_create()
+        serializer = SystemSettingSerializer(setting, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
