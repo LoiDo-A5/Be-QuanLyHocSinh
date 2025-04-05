@@ -3,8 +3,9 @@ from rest_framework import serializers
 from rest_framework import status
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
-from accounts.models import User
+from accounts.models import User, SystemSetting
 from django.contrib.auth.hashers import make_password
+from datetime import date
 
 class RegisterPhoneSerializer(serializers.ModelSerializer):
     password1 = serializers.CharField(write_only=True)
@@ -57,25 +58,37 @@ class RegisterPhoneApi(GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        email_exists = User.objects.filter(email=serializer.validated_data['email']).exists()
+        system_setting = SystemSetting.objects.first()
+        if not system_setting:
+            system_setting = SystemSetting.objects.create(min_student_age=15, max_student_age=20)
 
-        if email_exists:
-            error_message = gettext('Email already exists')
-            return Response({'error': error_message}, status=status.HTTP_400_BAD_REQUEST)
+        birthday = serializer.validated_data['birthday']
+        today = date.today()
+        age = today.year - birthday.year - ((today.month, today.day) < (birthday.month, birthday.day))
+
+        if not (system_setting.min_student_age <= age <= system_setting.max_student_age):
+            return Response(
+                {'error': gettext(f'Độ tuổi không hợp lệ. Chỉ chấp nhận từ {system_setting.min_student_age}'
+                                  f' đến {system_setting.max_student_age} tuổi.')},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        email = serializer.validated_data['email']
+        if User.objects.filter(email=email).exists():
+            return Response({'error': gettext('Email already exists')}, status=status.HTTP_400_BAD_REQUEST)
 
         User.objects.create(
-            username=serializer.validated_data['email'],
-            email=serializer.validated_data['email'],
+            username=email,
+            email=email,
             password=serializer.validated_data['password'],
             full_name=serializer.validated_data['full_name'],
             gender=serializer.validated_data['gender'],
-            birthday=serializer.validated_data['birthday'],
+            birthday=birthday,
             address=serializer.validated_data['address'],
             time_zone=serializer.validated_data.get('time_zone', 'Asia/Ho_Chi_Minh'),
         )
 
         return Response(
-            {
-                'message': gettext('Create user success'),
-            }, status.HTTP_200_OK,
+            {'message': gettext('Create user success')},
+            status=status.HTTP_200_OK
         )

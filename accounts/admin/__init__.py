@@ -11,10 +11,11 @@ from accounts.admin.message_admin import MessageAdmin
 from accounts.admin.student_score_admin import StudentScoreAdmin
 from accounts.admin.subject_admin import SubjectAdmin
 from accounts.admin.subject_score_admin import SubjectScoreAdmin
+from accounts.admin.system_setting_age_admin import SystemSettingAdmin
 from accounts.admin.token_admin import FilterTokenAdmin
 from accounts.admin.user_admin import UserAdmin
 from accounts.models import User, ChatRoom, Message, DirectMessage, Friendship, ClassLevel, ClassName, ClassStudent, \
-    StudentScore, Subject, SubjectScore
+    StudentScore, Subject, SubjectScore, SystemSetting
 
 admin.site.register(User, UserAdmin)
 admin.site.register(ChatRoom, ChatRoomAdmin)
@@ -30,3 +31,4 @@ admin.site.register(ClassStudent, ClassStudentAdmin)
 admin.site.register(StudentScore, StudentScoreAdmin)
 admin.site.register(Subject, SubjectAdmin)
 admin.site.register(SubjectScore, SubjectScoreAdmin)
+admin.site.register(SystemSetting, SystemSettingAdmin)
