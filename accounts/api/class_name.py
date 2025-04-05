@@ -1,7 +1,6 @@
 from rest_framework import viewsets
 from rest_framework import serializers
 from accounts.models.class_name import ClassName
-from accounts.models.user import USER_ROLE
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -20,13 +19,13 @@ class ClassNameViewSet(viewsets.ModelViewSet):
     serializer_class = ClassNameSerializer
 
     def create(self, request, *args, **kwargs):
-        if request.user.role == USER_ROLE.STUDENT:
-            return Response({'error': 'Students are not allowed to create class names.'},
-                            status=status.HTTP_403_FORBIDDEN)
-        return super().create(request, *args, **kwargs)
+        try:
+            return super().create(request, *args, **kwargs)
+        except PermissionError as e:
+            return Response({'error': str(e)}, status=status.HTTP_403_FORBIDDEN)
 
     def update(self, request, *args, **kwargs):
-        if request.user.role == USER_ROLE.STUDENT:
-            return Response({'error': 'Students are not allowed to update class names.'},
-                            status=status.HTTP_403_FORBIDDEN)
-        return super().update(request, *args, **kwargs)
+        try:
+            return super().update(request, *args, **kwargs)
+        except PermissionError as e:
+            return Response({'error': str(e)}, status=status.HTTP_403_FORBIDDEN)
