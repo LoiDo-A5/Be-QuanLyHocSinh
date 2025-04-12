@@ -8,7 +8,7 @@ from accounts.models import SystemSetting
 class SystemSettingSerializer(serializers.ModelSerializer):
     class Meta:
         model = SystemSetting
-        fields = ['min_student_age', 'max_student_age', 'max_students_per_class']
+        fields = ['min_student_age', 'max_student_age', 'max_students_per_class', 'pass_score']
 
 
 class SystemSettingView(APIView):

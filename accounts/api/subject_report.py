@@ -1,7 +1,8 @@
 from django.db.models import Count, Q, F, ExpressionWrapper, FloatField
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from accounts.models import SubjectScore, ClassName, Subject
+from accounts.models import SubjectScore, ClassName, Subject, SystemSetting
+
 
 class SubjectReportView(APIView):
 
@@ -17,6 +18,8 @@ class SubjectReportView(APIView):
         except Subject.DoesNotExist:
             return Response({"error": "Môn học không tồn tại"}, status=404)
 
+        system_setting, _ = SystemSetting.objects.get_or_create()
+        pass_score = system_setting.pass_score
         # Tính điểm trung bình môn theo công thức: (giữa kỳ * 1 + cuối kỳ * 2 + thi cuối kỳ * 3) / 6
         class_reports = (
             SubjectScore.objects
@@ -30,7 +33,7 @@ class SubjectReportView(APIView):
             .values('class_name')
             .annotate(
                 total_students=Count('student', distinct=True),
-                passed_students=Count('student', filter=Q(avg_score__gte=5), distinct=True)  # Điều kiện đạt môn
+                passed_students=Count('student', filter=Q(avg_score__gte=pass_score), distinct=True)  # Điều kiện đạt môn
             )
         )
 
