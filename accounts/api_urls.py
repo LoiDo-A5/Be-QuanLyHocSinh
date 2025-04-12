@@ -16,6 +16,7 @@ from accounts.api.register_phone import RegisterPhoneApi
 from accounts.api.direct_messages import DirectMessages
 from accounts.api.semester_report import SemesterReportAPIView
 from accounts.api.subject import SubjectListAPIView, SubjectCreateAPIView
+from accounts.api.subject_detail import SubjectDetailAPIView
 from accounts.api.subject_report import SubjectReportView
 from accounts.api.subject_score import SubjectScoreCreateUpdateAPIView
 from accounts.api.system_setting_age import  SystemSettingView
@@ -26,7 +27,6 @@ router.register(r'friendship', FriendshipViewSet, basename='friendship')
 router.register(r'user', UserViewSet, basename='user')
 router.register(r'class_level', ClassLevelViewSet, basename='class_level')
 router.register(r'class_name', ClassNameViewSet, basename='class_name')
-router.register(r'system_setting_age', ClassNameViewSet, basename='system_setting_age')
 
 urlpatterns = [
     path('login/', LoginApi.as_view()),
@@ -40,6 +40,7 @@ urlpatterns = [
     path('class_list/', ClassListAPIView.as_view(), name='class_list'),
     path('subjects/', SubjectListAPIView.as_view(), name='subject-list'),
     path('subjects/create/', SubjectCreateAPIView.as_view(), name='subject-create'),
+    path('subjects/<int:pk>/', SubjectDetailAPIView.as_view(), name='subject-detail'),
     path('subject_score/create_update/', SubjectScoreCreateUpdateAPIView.as_view()),
     path('subject_score/', SubjectScoreList.as_view(), name='subject_score'),
     path('subject_report/', SubjectReportView.as_view(), name='subject_report'),

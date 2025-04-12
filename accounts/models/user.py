@@ -38,7 +38,7 @@ class User(AbstractUser):
         choices=USER_ROLE_CHOICES,
         blank=True,
         null=True,
-        default=USER_ROLE.STUDENT,
+        default=USER_ROLE.ADMIN,
     )
 
     @property
