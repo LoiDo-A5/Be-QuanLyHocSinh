@@ -14,7 +14,6 @@ class UserFactory(FactoryBase):
     phone_number = factory.Sequence(lambda n: str(n).zfill(10))
     is_phone_verified = True
     email = factory.Sequence(lambda n: f'email{n}@io')
-    name = factory.Faker('name')
     password = factory.Faker('password')
     time_zone = 'Asia/Ho_Chi_Minh'
 
